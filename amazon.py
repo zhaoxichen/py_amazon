@@ -138,8 +138,8 @@ if __name__ == '__main__':
                     break
                 if counter > 10:
                     break
-                next_page = driver.find_element_by_id('pagnNextString')
                 if my_amazon.is_element_exist_unique('pagnNextString'):
+                    next_page = driver.find_element_by_id('pagnNextString')
                     next_page.click()
                     # 翻页加载需要时间
                     time.sleep(3)
