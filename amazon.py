@@ -25,13 +25,13 @@ class Amazon():
         global is_find
         # 查看商品标题
         product_list_title = driver.find_elements_by_xpath('//*[@id="s-results-list-atf"]/li/div/div//div[1]/a/h2')
-        print('本页共有' + str(len(product_list_title)) + '个商品')
+        print('本页共有' + str(len(product_list_title)) + '个商品，', end='')
         count_orders = 0
         for title_h2 in product_list_title:
             count_orders += 1
             title = title_h2.get_attribute('data-attribute')
             if self.my_title == title:
-                print('我的商品可以排在第' + str(count_orders) + '位>>>> ' + title)
+                print('我们的商品可以排在第' + str(count_orders) + '位>>>> ' + title)
                 is_find = 1
                 break
 
@@ -122,7 +122,8 @@ if __name__ == '__main__':
 
         for my_key in key_arr:
             # 输入，搜索
-            print('输入关键字   ' + my_key + '  搜索...')
+            print('*********************************************************************************************')
+            print('输入关键字>>> ' + my_key)
             my_amazon.product_search(my_key)
             # 搜索需要加载时间
             time.sleep(3)
@@ -130,20 +131,23 @@ if __name__ == '__main__':
             is_find = 0
             # 开始查询
             while 0 == is_find:
+                if counter > 9:
+                    print('翻完到了第十页都没有找到,这都写的什么关键字呀！不翻了')
+                    break
                 counter += 1
                 print("第" + str(counter) + '页')
                 # 获取位置
                 my_amazon.get_product_position_title()
                 if 1 == is_find:
                     break
-                if counter > 10:
-                    break
-                if my_amazon.is_element_exist_unique('pagnNextString'):
+                else:
+                    print('没有发现我们的商品')
+                try:
                     next_page = driver.find_element_by_id('pagnNextString')
                     next_page.click()
                     # 翻页加载需要时间
                     time.sleep(3)
-                else:
+                except:
                     print('翻完了所有页码都没有找到,这都写的什么关键字呀！！！！')
                     break
         print('***************************************本次查询工作完成***************************************')
