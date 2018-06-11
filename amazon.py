@@ -81,7 +81,7 @@ if __name__ == '__main__':
             break
         else:
             # 默认是单个关键字查询模式
-            key_arr.append(key_in)
+            key_arr.append(arm_handle)
             print(key_arr)
 
         for my_key in key_arr:
