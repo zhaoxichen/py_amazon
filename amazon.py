@@ -142,6 +142,7 @@ if __name__ == '__main__':
                     break
                 else:
                     print('没有发现我们的商品')
+                    print('点击下一页...')
                 try:
                     next_page = driver.find_element_by_id('pagnNextString')
                     next_page.click()
