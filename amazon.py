@@ -40,6 +40,28 @@ class Amazon():
         driver.find_element_by_xpath('//*[@id="twotabsearchtextbox"]').send_keys(key)
         driver.find_element_by_xpath('//*[@id="nav-search"]/form/div[2]/div/input').click()
 
+    # 元素存在，且唯一
+    def is_element_exist_unique(self, css_str):
+        s = driver.find_elements_by_css_selector(css_selector=css_str)
+        if len(s) == 0:
+            print
+            "元素未找到:%s" % css_str
+            return False
+        elif len(s) == 1:
+            return True
+        else:
+            print
+            "找到%s个元素：%s" % (len(s), css_str)
+            return False
+
+    # 元素存在
+    def is_element_exist(self, css_str):
+        try:
+            driver.find_element_by_css_selector(css_str)
+            return True
+        except:
+            return False
+
     # 读文件
     def read_file(self, file_path_keywords):
         if os.path.exists(self.work_space + file_path_keywords):
@@ -69,7 +91,7 @@ if __name__ == '__main__':
     tile_in = input('请输入要查询的商品标题，回车确认：')
     my_amazon.change_self_title(tile_in)
     print('说明：')
-    print('输入数字1或直接输入要查询的关键字，进入单个查询模式；')
+    print('输入数字1或直接输入要查询的关键字，进入单个查询模式')
     print('输入数字2，进入多个轮询；输入英文exit，退出脚本')
     print('输入数字3,进入更换查询对象，更改商品标题')
     print('输入英文exit，退出脚本')
@@ -99,26 +121,31 @@ if __name__ == '__main__':
             print(key_arr)
 
         for my_key in key_arr:
-            counter = 0
-            is_find = 0
             # 输入，搜索
             print('输入关键字   ' + my_key + '  搜索...')
             my_amazon.product_search(my_key)
-            # 点击下一页
+            # 搜索需要加载时间
+            time.sleep(3)
+            counter = 0
+            is_find = 0
+            # 开始查询
             while 0 == is_find:
                 counter += 1
                 print("第" + str(counter) + '页')
+                # 获取位置
+                my_amazon.get_product_position_title()
+                if 1 == is_find:
+                    break
                 if counter > 10:
                     break
-                my_amazon.get_product_position_title()
-                try:
-                    next_page = driver.find_element_by_id('pagnNextString')
-                    if next_page:
-                        next_page.click()
-                except:
-                    print('异常了,没有下一页了')
+                next_page = driver.find_element_by_id('pagnNextString')
+                if my_amazon.is_element_exist_unique('pagnNextString'):
+                    next_page.click()
+                    # 翻页加载需要时间
+                    time.sleep(3)
+                else:
+                    print('翻完了所有页码都没有找到,这都写的什么关键字呀！！！！')
                     break
-            time.sleep(3)
         print('***************************************本次查询工作完成***************************************')
     # 关闭浏览器
     driver.quit()
