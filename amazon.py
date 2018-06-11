@@ -18,6 +18,9 @@ class Amazon():
         # 商品标题
         self.my_title = '125ml Pet Drinking Bottle with Food Container Base Hanging Water Feeding Bottles Auto Dispenser for Hamsters Rats Small Animals Ferrets Rabbits Small Animals (125ML, Blue)'
 
+    def change_self_title(self, title_in):
+        self.my_title = title_in
+
     def get_product_position_title(self):
         global is_find
         # 查看商品标题
@@ -63,11 +66,18 @@ if __name__ == '__main__':
     driver = webdriver.Chrome()
     driver.get('https://www.amazon.com')
     my_amazon = Amazon()
+    tile_in = input('请输入要查询的商品标题，回车确认：')
+    my_amazon.change_self_title(tile_in)
+    print('说明：')
+    print('输入数字1或直接输入要查询的关键字，进入单个查询模式；')
+    print('输入数字2，进入多个轮询；输入英文exit，退出脚本')
+    print('输入数字3,进入更换查询对象，更改商品标题')
+    print('输入英文exit，退出脚本')
     # 无限循环
     while 1:
         # 判断要做的事情
-        print('说明：输入数字1或直接输入要查询的关键字，进入单个查询模式；输入数字2，进入多个轮询；输入英文exit，退出脚本')
-        arm_handle = input('请指示模式，回车确认：')
+        print('******************************************************************************')
+        arm_handle = input('请指示模式或直接输入要查询的keyword，回车确认：')
         key_arr = []
         if '1' == arm_handle:
             key_in = input('请输入要查询的关键字，回车确认:')
@@ -76,9 +86,12 @@ if __name__ == '__main__':
         elif '2' == arm_handle:
             keys_str = my_amazon.read_file('keywords.txt')
             key_arr = re.split('[,]', keys_str)
+        elif '3' == arm_handle:
+            tile_in = input('更换要查询的商品标题，请输入，回车确认：')
+            my_amazon.change_self_title(tile_in)
         elif 'exit' == arm_handle:
             # 退出
-            print('谢谢支持！！！')
+            print('***************************************谢谢支持！！！***************************************')
             break
         else:
             # 默认是单个关键字查询模式
@@ -100,11 +113,13 @@ if __name__ == '__main__':
                 my_amazon.get_product_position_title()
                 try:
                     next_page = driver.find_element_by_id('pagnNextString')
-                    next_page.click()
+                    if next_page:
+                        next_page.click()
                 except:
                     print('异常了,没有下一页了')
                     break
             time.sleep(3)
-        print('本次查询工作完成！！！！！！！！！！！！！！！！')
+        print('***************************************本次查询工作完成***************************************')
     # 关闭浏览器
     driver.quit()
+    print('***************************************再见！！！***************************************')
