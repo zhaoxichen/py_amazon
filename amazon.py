@@ -66,10 +66,11 @@ if __name__ == '__main__':
     # 无限循环
     while 1:
         # 判断要做的事情
-        arm_handle = input('请指示模式（输入数字1或直接输入要查询的关键字，进入单个查询模式；输入数字2，进入多个轮询）；输入英文exit，退出脚本：')
+        print('说明：输入数字1或直接输入要查询的关键字，进入单个查询模式；输入数字2，进入多个轮询；输入英文exit，退出脚本')
+        arm_handle = input('请指示模式，回车确认：')
         key_arr = []
         if '1' == arm_handle:
-            key_in = input('请输入要查询的关键字:')
+            key_in = input('请输入要查询的关键字，回车确认:')
             key_arr.append(key_in)
             print(key_arr)
         elif '2' == arm_handle:
