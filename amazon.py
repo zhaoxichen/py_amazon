@@ -7,6 +7,7 @@ Project:使用chrome浏览器，安装chromewebdriver.exe
 import time
 import re
 import os
+import xlsxwriter
 from selenium import webdriver
 
 
@@ -82,6 +83,18 @@ class Amazon():
                 return string
             finally:
                 rf.close()
+
+    def create_excel_file(self):
+        # 创建一个Excel文件
+        today = time.strftime('%Y%m%d%H%M', time.localtime())
+        workbook = xlsxwriter.Workbook('../excel/' + today + '.xlsx')
+        # 创建一个工作表
+        worksheet = workbook.add_worksheet()
+        # 写入第一行
+        first = ['商品名称', '品牌', '详情页网址', '原价格', '星级', '图片', '图片网址']
+        for i in range(0, len(first)):
+            worksheet.write(0, i, first[i])
+        # workbook.close()
 
 
 if __name__ == '__main__':

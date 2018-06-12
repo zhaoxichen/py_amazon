@@ -14,8 +14,8 @@ def geturl(url):
     # 制作头部
     header = {
         'User-Agent': 'Mozilla/5.0 (iPad; U; CPU OS 4_3_4 like Mac OS X; ja-jp) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8K2 Safari/6533.18.5',
-        'Referer': 'https://www.taobao.com/',
-        'Host': 'www.taobao.com',
+        'Referer': 'https://www.amazon.cn/',
+        'Host': 'www.amazon.cn',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
@@ -32,8 +32,8 @@ def getimg(url):
     # 制作头部
     header = {
         'User-Agent': 'Mozilla/5.0 (iPad; U; CPU OS 4_3_4 like Mac OS X; ja-jp) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8K2 Safari/6533.18.5',
-        'Referer': 'https://www.taobao.com/',
-        'Host': 'www.taobao.com',
+        'Referer': 'https://www.amazon.cn/',
+        'Host': 'www.amazon.cn',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
@@ -90,18 +90,16 @@ if __name__ == '__main__':
         sort = int(input("相关度排序请按0，人气排序请按1，上架时间排序请按2，价格低到高排序请按3，价格高到低请按4，用户评分排序请按5（默认相关度排序）："))
         if sort > 5 or sort <= 0:
             sort = ""
-        elif sort == '1':
+        elif sort == 1:
             sort = "popularity-rank"
-        elif sort == '2':
+        elif sort == 2:
             sort = "date-desc-rank"
-        elif sort == '3':
+        elif sort == 3:
             sort = "price-asc-rank"
-        elif sort == '4':
+        elif sort == 4:
             sort = "price-desc-rank"
-        elif sort == '5':
+        elif sort == 5:
             sort = "review-rank"
-        else:
-            sort = ''
     except:
         sort = ""
     try:
@@ -139,22 +137,19 @@ if __name__ == '__main__':
     nowtime = int(time.time())
 
     for page in range(0, pages):
+
         urldata = {
             'page': page,
-            'imgfile': '',
-            'js': '1',
-            'q': keyword,
-            'stats_click': 'search_radio_all%3A1',
-            'initiative_id': 'staobaoz_' + '20180612',
+            'sort': sort,
+            'keywords': keyword,
             'ie': 'UTF-8',
-            'sort': sort
-            # 'qid': str(nowtime)
+            'qid': str(nowtime)
         }
         urldata = urllib.parse.urlencode(urldata)
-        url = "https://s.taobao.com/search?stats_click=search_radio_all%3A1" + urldata
+        url = "https://www.amazon.cn/s/ref=nb_sb_noss_1?__mk_zh_CN=亚马逊网站&" + urldata
 
-        print('url>>>' + url)
         html = geturl(url).decode('Utf-8', 'ignore')
+
         # xpath解析需要的东西
         contents = etree.HTML(html)
 
@@ -200,8 +195,7 @@ if __name__ == '__main__':
         # print(len(arr_grades))
 
         # 得到图片
-        imgurls = contents.xpath('//*[@id="mainsrp-itemlist"]/div/div/div[1]/div[19]/div[1]/div/div/a/img')
-        print(imgurls)
+        imgurls = contents.xpath('//a[@class="a-link-normal a-text-normal"]/img/@src')
         arr_img = []
         # 将文件路径分割出来
         file_name = "../jpg/" + str(num) + ".jpg"
