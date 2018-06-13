@@ -53,17 +53,20 @@ if __name__ == "__main__":
     else:
         ue_sid = ""
 
-    # 第三步：构造请求
-    # 原始关键字
-    originalKey = input('请输入要查询的原始关键词（回车）：')
-    # search_alias = 'mobile'
-    # aps                       # All Departments 类别
-    search_alias = 'aps'  # 搜索类别，这个是类别下拉框中的。主页源码中也有
-    ks = 100  # 先自己指定，发现并不影响结果
-    # https://completion.amazon.com/search/complete?method=completion&mkt=1&r=T9GNBFENMKCSHQ96SN69&s=136-4489048-3064812&c=&p=Gateway&l=en_US&b2b=0&fresh=0&sv=desktop&client=amazon-search-ui&x=String&search-alias=mobile&ks=67&q=c&qs=&cf=1&fb=1&sc=1&
-    keywordsUrl = f"https://completion.amazon.com/search/complete?method=completion&mkt=1&r={ue_id}&s={ue_sid}&c=&p=Gateway&l=en_US&b2b=0&fresh=0&sv=desktop&client=amazon-search-ui&x=String&search-alias={search_alias}&ks={ks}&q={originalKey}&qs=&cf=1&fb=1&sc=1&"
-    secondResp = requests.get(keywordsUrl, headers=unicornHeader)
-    print('*****************************************************************************************')
-    print('原始关键词>>>' + originalKey)
-    print('******************************按热度补全后的关键词列表如下****************************************')
-    print(secondResp.text)
+    while 1:
+        # 第三步：构造请求
+        # 原始关键字
+        originalKey = input('请输入要查询的原始关键词（回车）：')
+        if originalKey == '88':
+            break
+        # search_alias = 'mobile'
+        # aps                       # All Departments 类别
+        search_alias = 'aps'  # 搜索类别，这个是类别下拉框中的。主页源码中也有
+        ks = 100  # 先自己指定，发现并不影响结果
+        # https://completion.amazon.com/search/complete?method=completion&mkt=1&r=T9GNBFENMKCSHQ96SN69&s=136-4489048-3064812&c=&p=Gateway&l=en_US&b2b=0&fresh=0&sv=desktop&client=amazon-search-ui&x=String&search-alias=mobile&ks=67&q=c&qs=&cf=1&fb=1&sc=1&
+        keywordsUrl = f"https://completion.amazon.com/search/complete?method=completion&mkt=1&r={ue_id}&s={ue_sid}&c=&p=Gateway&l=en_US&b2b=0&fresh=0&sv=desktop&client=amazon-search-ui&x=String&search-alias={search_alias}&ks={ks}&q={originalKey}&qs=&cf=1&fb=1&sc=1&"
+        secondResp = requests.get(keywordsUrl, headers=unicornHeader)
+        print('*****************************************************************************************')
+        print('原始关键词>>>' + originalKey)
+        print('******************************按热度补全后的关键词列表如下****************************************')
+        print(secondResp.text)
