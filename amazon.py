@@ -139,7 +139,10 @@ if __name__ == '__main__':
             print(key_arr)
         elif '2' == arm_handle:
             keys_str = my_amazon.read_file('keywords.txt')
-            key_arr = re.split('[,]', keys_str)
+            if None == keys_str:
+                print('文本中没有预设关键词')
+            else:
+                key_arr = re.split('[,]', keys_str)
         elif '3' == arm_handle:
             tile_in = input('更换要查询的商品标题，请输入，回车确认：')
             my_amazon.change_self_title(tile_in)
