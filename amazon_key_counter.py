@@ -67,8 +67,7 @@ if __name__ == "__main__":
             # xpath解析需要的东西
             html = etree.HTML(respContent)
             result_counts = html.xpath('//*[@id="s-result-count"]')
+            print('***************' + keywords + '***************')
             if 0 < len(result_counts):
                 result_count = result_counts[0]
                 print(result_count.text)
-            else:
-                print('***************')
