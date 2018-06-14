@@ -142,7 +142,7 @@ if __name__ == '__main__':
             print(key_arr)
         elif '2' == arm_handle:
             keys_str = my_amazon.read_file('keywords.txt')
-            if keys_str is None:
+            if '' == keys_str:
                 print('文本中没有预设关键词')
             else:
                 key_arr = re.split('[,]', keys_str)
