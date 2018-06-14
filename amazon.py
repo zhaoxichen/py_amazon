@@ -93,7 +93,10 @@ if __name__ == '__main__':
     driver.get('https://www.amazon.com')
     my_amazon = Amazon()
     tile_in = input('请输入要查询的商品标题，回车确认：')
-    my_amazon.change_self_title(tile_in)
+    if tile_in is None:
+        print(my_amazon.my_title)
+    else:
+        my_amazon.change_self_title(tile_in)
     print('说明：')
     print('输入数字1或直接输入要查询的关键字，进入单个查询模式')
     print('输入数字2，进入多个轮询；输入英文exit，退出脚本')
@@ -139,7 +142,7 @@ if __name__ == '__main__':
             print(key_arr)
         elif '2' == arm_handle:
             keys_str = my_amazon.read_file('keywords.txt')
-            if None == keys_str:
+            if keys_str is None:
                 print('文本中没有预设关键词')
             else:
                 key_arr = re.split('[,]', keys_str)
@@ -151,6 +154,8 @@ if __name__ == '__main__':
             # 退出
             print('***************************************谢谢支持！！！***************************************')
             break
+        elif arm_handle is None:
+            key_arr.append('hamster water bottle with base')
         else:
             # 默认是单个关键字查询模式
             key_arr.append(arm_handle)
