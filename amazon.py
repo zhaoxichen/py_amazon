@@ -152,6 +152,13 @@ if __name__ == '__main__':
         elif '3' == arm_handle:
             tile_in = input('更换要查询的商品标题，请输入，回车确认：')
             my_amazon.change_self_title(tile_in)
+            if '2' == tile_in:
+                tile_in = keys_str = my_amazon.read_file('my_title.txt')
+            if '' == tile_in:
+                print(my_amazon.my_title)
+            else:
+                my_amazon.change_self_title(tile_in)
+            print('查询的商品>>>' + tile_in)
             continue
         elif '88' == arm_handle:
             # 退出
