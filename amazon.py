@@ -93,10 +93,13 @@ if __name__ == '__main__':
     driver.get('https://www.amazon.com')
     my_amazon = Amazon()
     tile_in = input('请输入要查询的商品标题，回车确认：')
+    if '2' == tile_in:
+        tile_in = keys_str = my_amazon.read_file('my_title.txt')
     if '' == tile_in:
         print(my_amazon.my_title)
     else:
         my_amazon.change_self_title(tile_in)
+    print('查询的商品>>>' + tile_in)
     print('说明：')
     print('输入数字1或直接输入要查询的关键字，进入单个查询模式')
     print('输入数字2，进入多个轮询；输入英文exit，退出脚本')
