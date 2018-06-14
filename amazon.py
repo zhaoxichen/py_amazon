@@ -93,7 +93,7 @@ if __name__ == '__main__':
     driver.get('https://www.amazon.com')
     my_amazon = Amazon()
     tile_in = input('请输入要查询的商品标题，回车确认：')
-    if tile_in is None:
+    if '' == tile_in:
         print(my_amazon.my_title)
     else:
         my_amazon.change_self_title(tile_in)
@@ -154,7 +154,7 @@ if __name__ == '__main__':
             # 退出
             print('***************************************谢谢支持！！！***************************************')
             break
-        elif arm_handle is None:
+        elif '' == arm_handle:
             key_arr.append('hamster water bottle with base')
         else:
             # 默认是单个关键字查询模式
