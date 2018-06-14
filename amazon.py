@@ -17,8 +17,6 @@ from selenium import webdriver
 class Amazon():
 
     def __init__(self):
-        # 工作空间
-        self.work_space = 'D:\\Users\\'
         # 商品标题
         self.my_title = '125ml Pet Drinking Bottle with Food Container Base Hanging Water Feeding Bottles Auto Dispenser for Hamsters Rats Small Animals Ferrets Rabbits Small Animals (125ML, Blue)'
 
@@ -67,16 +65,18 @@ class Amazon():
             return False
 
     # 读文件
-    def read_file(self, file_path_keywords):
-        if os.path.exists(self.work_space + file_path_keywords):
-            file_path_keywords = self.work_space + file_path_keywords
-            print('使用用户自定义' + file_path_keywords)
-        elif os.path.exists(file_path_keywords):
-            print('使用默认' + file_path_keywords)
+    def read_file(self, file_name):
+        if os.path.exists(file_name):
+            print(file_name)
         else:
-            return
+            file_dir = os.path.split(file_name)[0]
+            # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+            if not os.path.isdir(file_dir):
+                os.makedirs(file_dir)
+            file = open(file_name, 'w')
+            file.close()
         string = ''
-        with open(file_path_keywords, "r+", encoding='utf-8') as rf:
+        with open(file_name, "r+", encoding='utf-8') as rf:
             try:
                 # 读每行
                 list_of_all_the_lines = rf.readlines()
@@ -89,12 +89,11 @@ class Amazon():
 
 
 if __name__ == '__main__':
-    driver = webdriver.Chrome()
-    driver.get('https://www.amazon.com')
     my_amazon = Amazon()
     tile_in = input('请输入要查询的商品标题，回车确认：')
     if '2' == tile_in:
-        tile_in = keys_str = my_amazon.read_file('my_title.txt')
+        my_title_file = '../res_input/my_title.txt'
+        tile_in = keys_str = my_amazon.read_file(my_title_file)
     if '' == tile_in:
         print(my_amazon.my_title)
     else:
@@ -114,7 +113,8 @@ if __name__ == '__main__':
         os.makedirs(file_dir)
     # 然后再判断文件是否存在，如果不存在，则创建
     if not os.path.exists(file_name):
-        os.system(r'touch %s' % file_name)
+        file = open(file_name, 'w')
+        file.close()
     # 创建一个Excel文件
     workbook = xlsxwriter.Workbook(file_name)
     # 创建一个工作表
@@ -125,13 +125,16 @@ if __name__ == '__main__':
         worksheet.write(0, i, first[i])
     workbook.close()  # 关闭
     row = 1
+    # 打开浏览器
+    driver = webdriver.Chrome()
+    driver.get('https://www.amazon.com')
     # 无限循环
     while 1:
         # 打开exce文件,可追加写入
         # pip install xlrd
         # pip install xlwt
         # pip install xlutils
-        rexcel = xlrd.open_workbook(file_name)  # 用wlrd提供的方法读取一个excel文件，保持原有格式
+        rexcel = xlrd.open_workbook(file_name)  # 用wlrd提供的方法读取一个excel文件
         rows = rexcel.sheets()[0].nrows  # 用wlrd提供的方法获得现在已有的行数
         excel = copy(rexcel)  # 用xlutils提供的copy方法将xlrd的对象转化为xlwt的对象
         table = excel.get_sheet(0)  # 用xlwt对象的方法获得要操作的sheet
@@ -144,7 +147,8 @@ if __name__ == '__main__':
             key_arr.append(key_in)
             print(key_arr)
         elif '2' == arm_handle:
-            keys_str = my_amazon.read_file('keywords.txt')
+            my_keys_file = '../res_input/keywords.txt'
+            keys_str = my_amazon.read_file(my_keys_file)
             if '' == keys_str:
                 print('文本中没有预设关键词')
             else:
@@ -153,7 +157,7 @@ if __name__ == '__main__':
             tile_in = input('更换要查询的商品标题，请输入，回车确认：')
             my_amazon.change_self_title(tile_in)
             if '2' == tile_in:
-                tile_in = keys_str = my_amazon.read_file('my_title.txt')
+                tile_in = keys_str = my_amazon.read_file(my_title_file)
             if '' == tile_in:
                 print(my_amazon.my_title)
             else:
