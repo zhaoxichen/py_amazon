@@ -218,6 +218,7 @@ if __name__ == '__main__':
             table.write(row, 2, arr_pos[j])
             table.write(row, 5, tile_in)
             row = row + 1
+        # 保存数据
         try:
             excel.save(file_name)
         except:

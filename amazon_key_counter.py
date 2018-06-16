@@ -1,8 +1,12 @@
 import os
 import re
+import time
 import urllib
+from xlutils.copy import copy
 
 import requests
+import xlrd
+import xlsxwriter
 from lxml import etree
 
 unicornHeader = {
@@ -37,7 +41,33 @@ def read_file(file_name):
 
 
 if __name__ == "__main__":
+    # 创建一个Excel文件
+    today = time.strftime('%Y%m%d%H%M', time.localtime())
+    file_name = '../excel/' + today + '.xls'
+    file_dir = os.path.split(file_name)[0]
+    # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+    if not os.path.isdir(file_dir):
+        os.makedirs(file_dir)
+    # 然后再判断文件是否存在，如果不存在，则创建
+    if not os.path.exists(file_name):
+        file = open(file_name, 'w')
+        file.close()
+    # 创建一个Excel文件
+    workbook = xlsxwriter.Workbook(file_name)
+    # 创建一个工作表
+    worksheet = workbook.add_worksheet()
+    # 写入第标题行
+    first = ['关键词', '搜索量']
+    for i in range(0, len(first)):
+        worksheet.write(0, i, first[i])
+    workbook.close()  # 关闭
+    row = 1
     while 1:
+        search_count = []
+        rexcel = xlrd.open_workbook(file_name)  # 用wlrd提供的方法读取一个excel文件
+        rows = rexcel.sheets()[0].nrows  # 用wlrd提供的方法获得现在已有的行数
+        excel = copy(rexcel)  # 用xlutils提供的copy方法将xlrd的对象转化为xlwt的对象
+        table = excel.get_sheet(0)  # 用xlwt对象的方法获得要操作的sheet
         keywords_arr = []
         keywords_in = input('请输入关键词：')
         if '2' == keywords_in:
@@ -67,7 +97,28 @@ if __name__ == "__main__":
             # xpath解析需要的东西
             html = etree.HTML(respContent)
             result_counts = html.xpath('//*[@id="s-result-count"]')
-            print('***************' + keywords + '***************')
+            print(keywords + '>>>>搜索量>>>>>', end="")  # 使输出不换行
             if 0 < len(result_counts):
                 result_count = result_counts[0]
+                search_count.append(result_count.text)
                 print(result_count.text)
+            else:
+                print('无')
+                search_count.append('无')
+        # 向excel写入数据
+        for j in range(0, len(search_count)):
+            table.write(row, 0, keywords_arr[j])
+            table.write(row, 1, search_count[j])
+            row = row + 1
+        # 保存数据
+        try:
+            excel.save(file_name)
+        except:
+            print('***************************************数据写入失败***************************************')
+            print('数据写入失败，请不要打开当前excel文件，请关闭当前正在操作的excel后，输入数字1，回车重试一次')
+            print('***************************************数据写入失败***************************************')
+            input('按回车重试一次:')
+            try:
+                excel.save(file_name)
+            except:
+                print('数据写入失败，抱歉！')
