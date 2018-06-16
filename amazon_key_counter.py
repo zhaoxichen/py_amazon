@@ -43,7 +43,7 @@ def read_file(file_name):
 if __name__ == "__main__":
     # 创建一个Excel文件
     today = time.strftime('%Y%m%d%H%M', time.localtime())
-    file_name = '../excel/' + today + '.xls'
+    file_name = '../excel/counter_' + today + '.xls'
     file_dir = os.path.split(file_name)[0]
     # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
     if not os.path.isdir(file_dir):
