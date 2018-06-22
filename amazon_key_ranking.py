@@ -41,7 +41,8 @@ if __name__ == "__main__":
     keywords = 'dogs'
     urldata = {
         'rh': 'i:aps,k:' + keywords,
-        'field-keywords': keywords
+        'field-keywords': keywords,
+        'page': '2'
     }
     urldata = urllib.parse.urlencode(urldata)
     url = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&" + urldata
@@ -58,13 +59,14 @@ if __name__ == "__main__":
     # //*[@id="s-results-list-atf"]
     print('***************' + keywords + '***************')
     ranking = 0
-    while 1:
-        result_titles = html.xpath(f'//*[@id="result_{ranking}"]/@data-asin')
-        if 0 == len(result_titles):
-            break
-        asin_code = result_titles[0]
-        print(f'result_{ranking}>>>' + asin_code)
-        if my_asin == asin_code:
+    # result_titles = html.xpath('//*[@id="s-results-list-atf"]/li/@data-asin')
+    result_titles = html.xpath('//li[@data-asin]')
+    for result_title in result_titles:
+        result_id = result_title.get('id')
+        result_asin_code = result_title.get('data-asin')
+        result_class = result_title.get('class')
+        print(result_id + '>>>' + result_asin_code + '>>>' + result_class)
+        if my_asin == result_asin_code:
             print('我的商品排在>>>' + str(ranking))
             break
         ranking = ranking + 1
