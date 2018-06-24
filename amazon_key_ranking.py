@@ -64,7 +64,7 @@ class Amazon():
                 rf.close()
 
     # 写文件
-    def write_out_to_excel(self, arr_ad, arr_page, arr_pos, keyword):
+    def write_out_to_excel(self, arr_ad, arr_page, arr_pos, arr_total_pos, keyword):
         rexcel = xlrd.open_workbook(self.out_file_name)  # 用wlrd提供的方法读取一个excel文件
         rows = rexcel.sheets()[0].nrows  # 用wlrd提供的方法获得现在已有的行数
         excel = copy(rexcel)  # 用xlutils提供的copy方法将xlrd的对象转化为xlwt的对象
@@ -75,6 +75,7 @@ class Amazon():
             table.write(rows, 0, keyword)
             table.write(rows, 1, arr_page[j])
             table.write(rows, 2, arr_pos[j])
+            table.write(rows, 3, arr_total_pos[j])
             table.write(rows, 5, self.my_asin)
             table.write(rows, 6, arr_ad[j])
             rows = rows + 1
@@ -97,6 +98,7 @@ class Amazon():
         arr_keys_find = []
         arr_page = []
         arr_pos = []
+        arr_total_pos = []
         arr_ad = []
         for page in range(1, 10):
             print('*******************************第' + str(page) + '页**************************************')
@@ -124,12 +126,12 @@ class Amazon():
                 result_id = result_title.get('id')
                 result_asin_code = result_title.get('data-asin')
                 result_class = result_title.get('class')
-                print(result_id + '>>>' + result_asin_code + '>>>' + result_class)
                 if self.my_asin == result_asin_code:
                     print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位')
                     arr_keys_find.append(keyword)
                     arr_page.append(page)
                     arr_pos.append(ranking)
+                    arr_total_pos.append(result_id)
                     if 'AdHolder' in result_class:
                         arr_ad.append('广告')
                     else:
@@ -139,7 +141,7 @@ class Amazon():
                 ranking = ranking + 1
         # 打开exce文件,可追加写入
         if 1 == is_find:
-            self.write_out_to_excel(arr_ad, arr_page, arr_pos, keyword)
+            self.write_out_to_excel(arr_ad, arr_page, arr_pos, arr_total_pos, keyword)
 
 
 # 程序入口
@@ -175,7 +177,7 @@ if __name__ == "__main__":
     # 创建一个工作表
     worksheet = workbook.add_worksheet()
     # 写入第标题行
-    first = ['关键词', '页码', '位置', '图片', '图片网址', '商品ASIN码', '是否广告']
+    first = ['关键词', '页码', '当页排名', '总排名', '商品地址', '商品ASIN码', '是否广告']
     for i in range(0, len(first)):
         worksheet.write(0, i, first[i])
     workbook.close()  # 关闭
