@@ -63,12 +63,42 @@ class Amazon():
             finally:
                 rf.close()
 
+    # 写文件
+    def write_out_to_excel(self, arr_ad, arr_page, arr_pos, keyword):
+        rexcel = xlrd.open_workbook(self.out_file_name)  # 用wlrd提供的方法读取一个excel文件
+        rows = rexcel.sheets()[0].nrows  # 用wlrd提供的方法获得现在已有的行数
+        excel = copy(rexcel)  # 用xlutils提供的copy方法将xlrd的对象转化为xlwt的对象
+        table = excel.get_sheet(0)  # 用xlwt对象的方法获得要操作的sheet
+        # 向excel写入数据
+        rows = rows + 1
+        for j in range(0, len(arr_page)):
+            table.write(rows, 0, keyword)
+            table.write(rows, 1, arr_page[j])
+            table.write(rows, 2, arr_pos[j])
+            table.write(rows, 5, self.my_asin)
+            table.write(rows, 6, arr_ad[j])
+            rows = rows + 1
+        # 保存数据
+        try:
+            excel.save(self.out_file_name)
+        except:
+            print('***************************************数据写入失败***************************************')
+            print('数据写入失败，请不要打开当前excel文件，请关闭当前正在操作的excel后，输入数字1，回车重试一次')
+            print('***************************************数据写入失败***************************************')
+            input('输入数字1，按回车重试一次:')
+            try:
+                excel.save(self.out_file_name)
+            except:
+                print('数据写入失败，抱歉！')
+
     def match_one_key(self, keyword):
         global is_find
         is_find = 0
+        arr_keys_find = []
+        arr_page = []
+        arr_pos = []
+        arr_ad = []
         for page in range(1, 10):
-            if 1== is_find:
-                break
             print('*******************************第' + str(page) + '页**************************************')
             urldata = {
                 'rh': 'i:aps,k:' + keyword,
@@ -97,44 +127,28 @@ class Amazon():
                 print(result_id + '>>>' + result_asin_code + '>>>' + result_class)
                 if self.my_asin == result_asin_code:
                     print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位')
-                    is_find = 1  # 找到料
-                    break
+                    arr_keys_find.append(keyword)
+                    arr_page.append(page)
+                    arr_pos.append(ranking)
+                    if 'AdHolder' in result_class:
+                        arr_ad.append('广告')
+                    else:
+                        arr_ad.append('自然排名')
+                    is_find = 1  # 找到了
+                    # break
                 ranking = ranking + 1
         # 打开exce文件,可追加写入
         if 1 == is_find:
-            rexcel = xlrd.open_workbook(self.out_file_name)  # 用wlrd提供的方法读取一个excel文件
-            rows = rexcel.sheets()[0].nrows  # 用wlrd提供的方法获得现在已有的行数
-            excel = copy(rexcel)  # 用xlutils提供的copy方法将xlrd的对象转化为xlwt的对象
-            table = excel.get_sheet(0)  # 用xlwt对象的方法获得要操作的sheet
-            # 向excel写入数据
-            rows = rows + 1
-            table.write(rows, 0, keyword)
-            table.write(rows, 1, page)
-            table.write(rows, 2, ranking)
-            table.write(rows, 5, result_asin_code)
-
-            # 保存数据
-            try:
-                excel.save(self.out_file_name)
-            except:
-                print('***************************************数据写入失败***************************************')
-                print('数据写入失败，请不要打开当前excel文件，请关闭当前正在操作的excel后，输入数字1，回车重试一次')
-                print('***************************************数据写入失败***************************************')
-                input('输入数字1，按回车重试一次:')
-                try:
-                    excel.save(self.out_file_name)
-                except:
-                    print('数据写入失败，抱歉！')
+            self.write_out_to_excel(arr_ad, arr_page, arr_pos, keyword)
 
 
 # 程序入口
 if __name__ == "__main__":
     my_amazon = Amazon()
-
-    asin_in = input('请输入要查询的商品ASIN码，回车确认：')
+    asin_in = input('请输入要查询商品的ASIN码，回车确认：')
     if '2' == asin_in:
-        my_title_file = '../res_input/my_title.txt'
-        asin_in = keys_str = my_amazon.read_file(my_title_file)
+        my_asin_file = '../res_input/my_asin.txt'
+        asin_in = my_amazon.read_file(my_asin_file)
     if '' == asin_in:
         print(my_amazon.my_asin)
     else:
@@ -142,12 +156,12 @@ if __name__ == "__main__":
     print('查询的商品>>>' + my_amazon.my_asin)
     print('说明：')
     print('输入数字1或直接输入要查询的关键字，进入单个查询模式')
-    print('输入数字2，进入多个轮询；输入英文exit，退出脚本')
+    print('输入数字2，进入多个轮询')
     print('输入数字3,进入更换查询对象，更改商品标题')
     print('输入数字88，退出脚本')
     # 创建一个Excel文件
     today = time.strftime('%Y%m%d%H%M', time.localtime())
-    file_name = '../excel/' + today + '.xls'
+    file_name = f'../excel/{today }.xls'
     file_dir = os.path.split(file_name)[0]
     # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
     if not os.path.isdir(file_dir):
@@ -161,7 +175,7 @@ if __name__ == "__main__":
     # 创建一个工作表
     worksheet = workbook.add_worksheet()
     # 写入第标题行
-    first = ['关键词', '页码', '位置', '图片', '图片网址', '商品ASIN码']
+    first = ['关键词', '页码', '位置', '图片', '图片网址', '商品ASIN码', '是否广告']
     for i in range(0, len(first)):
         worksheet.write(0, i, first[i])
     workbook.close()  # 关闭
@@ -184,10 +198,9 @@ if __name__ == "__main__":
             else:
                 key_arr = re.split('[,]', keys_str)
         elif '3' == arm_handle:
-            asin_in = input('更换要查询的商品标题，请输入，回车确认：')
-            my_amazon.change_self_title(asin_in)
+            asin_in = input('更换要查询的ASIN，请输入，回车确认：')
             if '2' == asin_in:
-                asin_in = keys_str = my_amazon.read_file(my_title_file)
+                asin_in = my_amazon.read_file(my_asin_file)
             if '' == asin_in:
                 print(my_amazon.my_asin)
             else:
