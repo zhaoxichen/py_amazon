@@ -127,15 +127,16 @@ class Amazon():
                 result_asin_code = result_title.get('data-asin')
                 result_class = result_title.get('class')
                 if self.my_asin == result_asin_code:
-                    print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位')
                     arr_keys_find.append(keyword)
                     arr_page.append(page)
                     arr_pos.append(ranking)
                     arr_total_pos.append(result_id)
                     if 'AdHolder' in result_class:
                         arr_ad.append('广告')
+                        print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位，广告')
                     else:
                         arr_ad.append('自然排名')
+                        print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位，自然排名')
                     is_find = 1  # 找到了
                     # break
                 ranking = ranking + 1
