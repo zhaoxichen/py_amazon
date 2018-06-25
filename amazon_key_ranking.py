@@ -141,11 +141,11 @@ class Amazon():
                         print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位，自然排名')
                     is_find = 1  # 找到了
                     # break
+            if 1 == is_find:
+                print('关键词' + keyword + '查不到商品>>>' + self.my_asin)
         # 打开exce文件,可追加写入
         if 1 == is_find:
             self.write_out_to_excel(arr_ad, arr_page, arr_pos, arr_total_pos, keyword)
-        else:
-            print('关键词' + keyword + '查不到商品>>>' + self.my_asin)
 
 
 # 程序入口
