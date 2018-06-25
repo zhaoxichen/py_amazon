@@ -101,7 +101,6 @@ class Amazon():
         arr_total_pos = []
         arr_ad = []
         for page in range(1, 10):
-            print('*******************************第' + str(page) + '页**************************************')
             urldata = {
                 'rh': 'i:aps,k:' + keyword,
                 'field-keywords': keyword,
@@ -109,6 +108,8 @@ class Amazon():
             }
             urldata = urllib.parse.urlencode(urldata)
             url = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&" + urldata
+            print(url)
+            print('*******************************第' + str(page) + '页**************************************')
             # 第一步 取出页面的数据
             resp = requests.get(url=url, headers=my_amazon.unicornHeader, stream=True)
             respContent = resp.content
@@ -126,6 +127,7 @@ class Amazon():
                 result_id = result_title.get('id')
                 result_asin_code = result_title.get('data-asin')
                 result_class = result_title.get('class')
+                ranking = ranking + 1
                 if self.my_asin == result_asin_code:
                     arr_keys_find.append(keyword)
                     arr_page.append(page)
@@ -139,10 +141,11 @@ class Amazon():
                         print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位，自然排名')
                     is_find = 1  # 找到了
                     # break
-                ranking = ranking + 1
         # 打开exce文件,可追加写入
         if 1 == is_find:
             self.write_out_to_excel(arr_ad, arr_page, arr_pos, arr_total_pos, keyword)
+        else:
+            print('关键词' + keyword + '查不到商品>>>' + self.my_asin)
 
 
 # 程序入口
@@ -225,7 +228,5 @@ if __name__ == "__main__":
             # 输入，搜索
             print('搜索>>>' + my_key)
             my_amazon.match_one_key(my_key)
-            # 搜索需要加载时间
-            time.sleep(3)
         print('***************************************本次查询工作完成***************************************')
     print('***************************************再见！！！***************************************')
