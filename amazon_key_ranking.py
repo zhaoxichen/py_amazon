@@ -93,7 +93,7 @@ class Amazon():
             }
             urldata = urllib.parse.urlencode(urldata)
             url = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&" + urldata
-            print(url)
+            # print(url)
             print('*******************************第' + str(page) + '页**************************************')
             # 第一步 取出页面的数据
             resp = requests.get(url=url, headers=my_amazon.unicornHeader, stream=True)
@@ -129,7 +129,7 @@ class Amazon():
                     is_page_find = 1
                     # break
             if 0 == is_page_find:
-                print('关键词' + keyword + '查不到商品>>>' + self.my_asin)
+                print('这一页没有查到<' + self.my_asin + '>的商品，看看下一页吧')
         # 打开exce文件,可追加写入
         if 1 == is_find:
             self.write_out_to_excel(arr_ad, arr_page, arr_pos, arr_total_pos, keyword)
@@ -176,7 +176,6 @@ if __name__ == "__main__":
     # 无限循环
     while 1:
         # 判断要做的事情
-        print('******************************************************************************')
         arm_handle = input('请指示模式或直接输入要查询的keyword，回车确认：')
         key_arr = []
         if '1' == arm_handle:
@@ -213,7 +212,9 @@ if __name__ == "__main__":
 
         for my_key in key_arr:
             # 输入，搜索
-            print('搜索>>>' + my_key)
+            print('******************************************************************************')
+            print('******************搜索<' + my_key + '>********************')
             my_amazon.match_one_key(my_key)
+            print('******************************************************************************')
         print('***************************************本次查询工作完成***************************************')
     print('***************************************再见！！！***************************************')
