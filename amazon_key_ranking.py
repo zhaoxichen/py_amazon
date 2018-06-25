@@ -26,20 +26,6 @@ class Amazon():
     def change_self_asin(self, asin_in):
         self.my_asin = asin_in
 
-    def get_product_position_title(self):
-        global is_find
-        # 查看商品标题
-        product_list_title = ''
-        print('本页共有' + str(len(product_list_title)) + '个商品，', end='')
-        count_orders = 0
-        for title_h2 in product_list_title:
-            count_orders += 1
-            title = title_h2.get_attribute('data-attribute')
-            if self.my_title == title:
-                print('我们的商品可以排在第' + str(count_orders) + '位>>>> ' + title)
-                is_find = 1
-                return count_orders
-
     # 读文件
     def read_file(self, file_name):
         if os.path.exists(file_name):
@@ -93,13 +79,12 @@ class Amazon():
                 print('数据写入失败，抱歉！')
 
     def match_one_key(self, keyword):
-        global is_find
-        is_find = 0
         arr_keys_find = []
         arr_page = []
         arr_pos = []
         arr_total_pos = []
         arr_ad = []
+        is_find = 0
         for page in range(1, 10):
             urldata = {
                 'rh': 'i:aps,k:' + keyword,
@@ -123,6 +108,7 @@ class Amazon():
                 break
             print('这一页有' + str(total_product) + '个商品')
             ranking = 0
+            is_page_find = 0
             for result_title in result_titles:
                 result_id = result_title.get('id')
                 result_asin_code = result_title.get('data-asin')
@@ -140,8 +126,9 @@ class Amazon():
                         arr_ad.append('自然排名')
                         print('我的商品排在>>>' + str(page) + '页' + str(ranking) + '位，自然排名')
                     is_find = 1  # 找到了
+                    is_page_find = 1
                     # break
-            if 1 == is_find:
+            if 0 == is_page_find:
                 print('关键词' + keyword + '查不到商品>>>' + self.my_asin)
         # 打开exce文件,可追加写入
         if 1 == is_find:
